@@ -12,7 +12,7 @@ const MONGO_URI = "mongodb+srv://shavidu4321:Recipe123App@cluster0.tfsvv.mongodb
 mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
+})
 
 // Connection success and error handling
 mongoose.connection.on("connected", () => {
