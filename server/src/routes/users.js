@@ -19,9 +19,7 @@ router.post("/register",async (req, res) => {
     const newUser = new UserModel({username, password: hashedPassword});
     await newUser.save();
 
-    res.json({message: "User registered successfully"});
-
-    res.json(user);
+    res.json({ message: "User registered successfully", userID: newUser._id });
 });
 
 router.post("/login", async (req, res) => {
@@ -44,3 +42,17 @@ router.post("/login", async (req, res) => {
 })
 
 export{router as userRouter};
+
+export const verifyToken = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+      jwt.verify(authHeader, "secret", (err) => {
+        if (err) {
+          return res.sendStatus(403);
+        }
+        next();
+      });
+    } else {
+      res.sendStatus(401);
+    }
+  };

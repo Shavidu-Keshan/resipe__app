@@ -12,7 +12,7 @@ export const Auth = () => {
   );
 };
 
-const Login = () => {
+export const Login = () => {
   const [_, setCookies] = useCookies(["access_token"]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -27,11 +27,17 @@ const Login = () => {
         password,
       });
 
-      setCookies("access_token", result.data.token);
-      window.localStorage.setItem("userID", result.data.userID);
-      navigate("/");
+      if (result.data.token) {
+        setCookies("access_token", result.data.token);
+        window.localStorage.setItem("userID", result.data.userID);
+        navigate("/"); // Redirect after successful login
+      } else {
+        console.error("Login failed:", result.data.message);
+        alert("Login failed: " + result.data.message);
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Error during login:", error);
+      alert("An error occurred during login.");
     }
   };
 
@@ -40,7 +46,9 @@ const Login = () => {
       <form onSubmit={handleSubmit}>
         <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
         <div className="form-group mb-4">
-          <label htmlFor="username" className="block text-gray-700 mb-2">Username:</label>
+          <label htmlFor="username" className="block text-gray-700 mb-2">
+            Username:
+          </label>
           <input
             type="text"
             id="username"
@@ -50,7 +58,9 @@ const Login = () => {
           />
         </div>
         <div className="form-group mb-4">
-          <label htmlFor="password" className="block text-gray-700 mb-2">Password:</label>
+          <label htmlFor="password" className="block text-gray-700 mb-2">
+            Password:
+          </label>
           <input
             type="password"
             id="password"
@@ -70,29 +80,38 @@ const Login = () => {
   );
 };
 
-const Register = () => {
+export const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await axios.post("http://localhost:3001/auth/register", {
+      const result = await axios.post("http://localhost:3001/auth/register", {
         username,
         password,
       });
-      alert("Registration successful!");
+  
+      if (result.data.userID) {
+        window.localStorage.setItem("userID", result.data.userID);
+        alert("Registration successful!");
+      } else {
+        alert("Registration successful, but no userID returned.");
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Error during registration:", error.response.data.message);
+      alert("Registration failed: " + error.response.data.message);
     }
   };
-
+  
   return (
     <div className="bg-white p-8 rounded-lg shadow-md w-80">
       <form onSubmit={handleSubmit}>
         <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
         <div className="form-group mb-4">
-          <label htmlFor="username" className="block text-gray-700 mb-2">Username:</label>
+          <label htmlFor="username" className="block text-gray-700 mb-2">
+            Username:
+          </label>
           <input
             type="text"
             id="username"
@@ -102,7 +121,9 @@ const Register = () => {
           />
         </div>
         <div className="form-group mb-4">
-          <label htmlFor="password" className="block text-gray-700 mb-2">Password:</label>
+          <label htmlFor="password" className="block text-gray-700 mb-2">
+            Password:
+          </label>
           <input
             type="password"
             id="password"

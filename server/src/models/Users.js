@@ -11,8 +11,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     savedRecipes: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "recipes"
+        type: mongoose.Schema.Types.ObjectId, ref: "Recipe" 
     }]
 
 });
